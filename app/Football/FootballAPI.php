@@ -32,6 +32,6 @@ class FootballAPI{
     public static function getLeagueStandings(int $leagueID)
     {
         $leagueStandings = self::run("v2/competitions/{$leagueID}/standings");
-        return collect($leagueStandings->standings);
+        return collect($leagueStandings->standings)[0]->table;
     }
 }
