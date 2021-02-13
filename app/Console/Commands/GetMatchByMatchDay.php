@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Football\FootballAPI;
 use App\Http\Services\Discord\DiscordChannel;
+use App\Models\FootballTeam;
 use App\Models\Result;
 use Carbon\Carbon;
 use Discord\Discord;
@@ -52,6 +53,19 @@ class GetMatchByMatchDay extends Command
 
         $premMatches = FootballAPI::findPremierLeagueMatchesCompetitionAndMatchday(NULL);
         foreach ($premMatches->matches as $match){
+
+            //Update the team ID
+            FootballTeam::query()->where('name',$match->homeTeam->name)
+                ->update([
+                    'football_api_id' => $match->homeTeam->id
+                ]);
+
+            FootballTeam::query()->where('name',$match->awayTeam->name)
+                ->update([
+                    'football_api_id' => $match->awayTeam->id
+                ]);
+
+
             Result::query()->updateOrCreate([
                 'match_id' => $match->id
             ],[
@@ -59,8 +73,10 @@ class GetMatchByMatchDay extends Command
                 'comp' => 'Premier League',
                 'status' => $match->status,
                 'winner' => $match->score->winner,
+                'home_team_id' => $match->homeTeam->id,
                 'home_team_name' => $match->homeTeam->name,
                 'home_team_score' => $match->score->fullTime->homeTeam,
+                'away_team_id' => $match->awayTeam->id,
                 'away_team_name' => $match->awayTeam->name,
                 'away_team_score' => $match->score->fullTime->awayTeam,
             ]);
