@@ -17,6 +17,7 @@ class CreateResultsTable extends Migration
             $table->id();
             $table->integer('match_id');
             $table->integer('match_day');
+            $table->string('comp');
             $table->string('status');
             $table->string('winner');
             $table->string('home_team_name');

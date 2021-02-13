@@ -56,6 +56,7 @@ class GetMatchByMatchDay extends Command
                 'match_id' => $match->id
             ],[
                 'match_day' => $match->matchday,
+                'comp' => 'Premier League',
                 'status' => $match->status,
                 'winner' => $match->score->winner,
                 'home_team_name' => $match->homeTeam->name,
@@ -65,35 +66,37 @@ class GetMatchByMatchDay extends Command
             ]);
         }
 
-        $champMatches = FootballAPI::findPremierLeagueMatchesCompetitionAndMatchday(NULL);
-        foreach ($champMatches->matches as $match){
-            Result::query()->updateOrCreate([
-                'match_id' => $match->id
-            ],[
-                'match_day' => $match->matchday,
-                'status' => $match->status,
-                'winner' => $match->score->winner,
-                'home_team_name' => $match->homeTeam->name,
-                'home_team_score' => $match->score->fullTime->homeTeam,
-                'away_team_name' => $match->awayTeam->name,
-                'away_team_score' => $match->score->fullTime->awayTeam,
-            ]);
-        }
+//        $champMatches = FootballAPI::findChampionsLeagueMatchesCompetitionAndMatchday(NULL);
+//        foreach ($champMatches->matches as $match){
+//            Result::query()->updateOrCreate([
+//                'match_id' => $match->id
+//            ],[
+//                'match_day' => $match->matchday,
+//                'comp' => 'UFEA Champions League',
+//                'status' => $match->status,
+//                'winner' => $match->score->winner,
+//                'home_team_name' => $match->homeTeam->name,
+//                'home_team_score' => $match->score->fullTime->homeTeam,
+//                'away_team_name' => $match->awayTeam->name,
+//                'away_team_score' => $match->score->fullTime->awayTeam,
+//            ]);
+//        }
 
-        $eurpMatches = FootballAPI::findEuropaLeagueMatchesCompetitionAndMatchday(NULL);
-        foreach ($eurpMatches->matches as $match){
-            Result::query()->updateOrCreate([
-                'match_id' => $match->id
-            ],[
-                'match_day' => $match->matchday,
-                'status' => $match->status,
-                'winner' => $match->score->winner,
-                'home_team_name' => $match->homeTeam->name,
-                'home_team_score' => $match->score->fullTime->homeTeam,
-                'away_team_name' => $match->awayTeam->name,
-                'away_team_score' => $match->score->fullTime->awayTeam,
-            ]);
-        }
+//        $eurpMatches = FootballAPI::findEuropaLeagueMatchesCompetitionAndMatchday(NULL);
+//        foreach ($eurpMatches->matches as $match){
+//            Result::query()->updateOrCreate([
+//                'match_id' => $match->id
+//            ],[
+//                'match_day' => $match->matchday,
+//                'comp' => 'UFEA Europa League',
+//                'status' => $match->status,
+//                'winner' => $match->score->winner,
+//                'home_team_name' => $match->homeTeam->name,
+//                'home_team_score' => $match->score->fullTime->homeTeam,
+//                'away_team_name' => $match->awayTeam->name,
+//                'away_team_score' => $match->score->fullTime->awayTeam,
+//            ]);
+//        }
 
         //Send Message in Discord..
         $results = Result::query()->whereDate('created_at',Carbon::today()->toDateString())->get();

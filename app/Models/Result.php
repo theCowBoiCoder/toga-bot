@@ -13,6 +13,7 @@ class Result extends Model
     protected $fillable = [
         'match_id',
         'match_day',
+        'comp',
         'status',
         'winner',
         'home_team_name',
