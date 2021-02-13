@@ -41,9 +41,22 @@ class FootballAPI{
         return self::run('v2/competitions/'.$leagueId.'/teams','GET');
     }
 
-    public static function findMatchesByCompetitionAndMatchday($date)
+    public static function findPremierLeagueMatchesCompetitionAndMatchday($date)
     {
         $resource = 'competitions/' . env('FOOTBALL_PREMIER_LEAGUE_ID') . '/matches/?matchday=' . $date.'&dateFrom='.Carbon::today()->toDateString().'&dateTo='.Carbon::today()->toDateString().'';
+        return self::run("v2/$resource",'GET');
+    }
+
+    public static function findChampionsLeagueMatchesCompetitionAndMatchday($date)
+    {
+        $resource = 'competitions/' . env('CHAMPIONS_LEAGUE_ID') . '/matches/?matchday=' . $date.'&dateFrom='.Carbon::today()->toDateString().'&dateTo='.Carbon::today()->toDateString().'';
+        return self::run("v2/$resource",'GET');
+    }
+
+
+    public static function findEuropaLeagueMatchesCompetitionAndMatchday($date)
+    {
+        $resource = 'competitions/' . env('EURPOA_LEAGUE_ID') . '/matches/?matchday=' . $date.'&dateFrom='.Carbon::today()->toDateString().'&dateTo='.Carbon::today()->toDateString().'';
         return self::run("v2/$resource",'GET');
     }
 }

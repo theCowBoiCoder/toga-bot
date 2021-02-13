@@ -50,8 +50,38 @@ class GetMatchByMatchDay extends Command
             'token' => env('DISCORD_TOKEN')
         ]);
 
-        $matches = FootballAPI::findMatchesByCompetitionAndMatchday(NULL);
-        foreach ($matches->matches as $match){
+        $premMatches = FootballAPI::findPremierLeagueMatchesCompetitionAndMatchday(NULL);
+        foreach ($premMatches->matches as $match){
+            Result::query()->updateOrCreate([
+                'match_id' => $match->id
+            ],[
+                'match_day' => $match->matchday,
+                'status' => $match->status,
+                'winner' => $match->score->winner,
+                'home_team_name' => $match->homeTeam->name,
+                'home_team_score' => $match->score->fullTime->homeTeam,
+                'away_team_name' => $match->awayTeam->name,
+                'away_team_score' => $match->score->fullTime->awayTeam,
+            ]);
+        }
+
+        $champMatches = FootballAPI::findPremierLeagueMatchesCompetitionAndMatchday(NULL);
+        foreach ($champMatches->matches as $match){
+            Result::query()->updateOrCreate([
+                'match_id' => $match->id
+            ],[
+                'match_day' => $match->matchday,
+                'status' => $match->status,
+                'winner' => $match->score->winner,
+                'home_team_name' => $match->homeTeam->name,
+                'home_team_score' => $match->score->fullTime->homeTeam,
+                'away_team_name' => $match->awayTeam->name,
+                'away_team_score' => $match->score->fullTime->awayTeam,
+            ]);
+        }
+
+        $eurpMatches = FootballAPI::findEuropaLeagueMatchesCompetitionAndMatchday(NULL);
+        foreach ($eurpMatches->matches as $match){
             Result::query()->updateOrCreate([
                 'match_id' => $match->id
             ],[
@@ -85,7 +115,7 @@ class GetMatchByMatchDay extends Command
             ];
 
             $data = [
-                'content' => 'Premier League Today',
+                'content' => 'Football Results Today',
                 'embeds' => $embeds
             ];
 
