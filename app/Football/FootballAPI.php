@@ -34,4 +34,15 @@ class FootballAPI{
         $leagueStandings = self::run("v2/competitions/{$leagueID}/standings");
         return collect($leagueStandings->standings)[0]->table;
     }
+
+    public static function getTeams($leagueId)
+    {
+        return self::run('v2/competitions/'.$leagueId.'/teams','GET');
+    }
+
+    public static function findMatchesByCompetitionAndMatchday($date)
+    {
+        $resource = 'competitions/' . env('FOOTBALL_PREMIER_LEAGUE_ID') . '/matches/?matchday=' . $date;
+        return self::run("v2/$resource",'GET');
+    }
 }

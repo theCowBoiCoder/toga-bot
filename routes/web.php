@@ -14,6 +14,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $football = \App\Football\FootballAPI::getLeagueStandings(env('FOOTBALL_PREMIER_LEAGUE_ID'));
-    dd($football);
+   return view('welcome');
 });

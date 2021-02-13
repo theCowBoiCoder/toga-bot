@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Discord\JoinTeam;
+use App\Discord\Member as DiscordMember;
 use App\Football\FootballAPI;
 use App\Models\Members;
 use Carbon\Carbon;
@@ -55,7 +56,6 @@ class TestDiscordBotCommand extends Command
     public function handle()
     {
 
-
         $discord = new Discord([
             'token' => env('DISCORD_TOKEN')
         ]);
@@ -72,14 +72,10 @@ class TestDiscordBotCommand extends Command
                     JoinTeam::join($message);
                 }
 
-                if (Str::contains($message->content, '--changenickname') !== false) {
-                    $explode = explode(' ', $message->content);
-//                    $discordClient->guild->modifyGuildMember(
-//                        ['guild.id' => (int)env('DISCORD_GUILD'), 'user.id' => (int)$message->user_id]
-//                    );
-                    dump($message->author->id);
-                    $discordClient->guild->modifyGuildMember(['guild.id' => (int)env('DISCORD_GUILD'), 'user.id' => (int)$message->user_id, 'nick' => 'string']);
+                if ($message->content === '--me') {
+                    DiscordMember::me($message);
                 }
+
 
 
                 if ($message->content === '--topoftheleague') {

@@ -4,6 +4,7 @@ namespace App\Discord;
 
 use App\Models\Members;
 use Discord\Parts\Channel\Message;
+use React\Promise\ExtendedPromiseInterface;
 
 class JoinTeam
 {
@@ -11,10 +12,10 @@ class JoinTeam
     /**
      * Member joins the discord crew
      * @param Message $message
-     * @return \React\Promise\ExtendedPromiseInterface
+     * @return ExtendedPromiseInterface
      * @throws \Exception
      */
-    public static function join(Message $message): \React\Promise\ExtendedPromiseInterface
+    public static function join(Message $message): ExtendedPromiseInterface
     {
         $author = $message->author;
         $newUser = Members::query()->where('discord_id', $author->user->id)->first();
@@ -30,10 +31,5 @@ class JoinTeam
         }
 
         return $message->channel->sendMessage("Sorry {$author->nick} you have already joined the crew!");
-    }
-
-    public static function changeNickname(Message $message, $nickname)
-    {
-        return $message->author->setNickname($nickname);
     }
 }
