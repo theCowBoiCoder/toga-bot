@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('togabot:get_match_by_match_day')->dailyAt('21:30')->evenInMaintenanceMode()->onOneServer();
         $schedule->command('togabot:store_team_data')->dailyAt('23:00')->evenInMaintenanceMode()->onOneServer();
     }
 

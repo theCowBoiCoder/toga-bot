@@ -15,6 +15,14 @@ class CreateResultsTable extends Migration
     {
         Schema::create('results', function (Blueprint $table) {
             $table->id();
+            $table->integer('match_id');
+            $table->integer('match_day');
+            $table->string('status');
+            $table->string('winner');
+            $table->string('home_team_name');
+            $table->integer('home_team_score');
+            $table->string('away_team_name');
+            $table->integer('away_team_score');
             $table->timestamps();
         });
     }

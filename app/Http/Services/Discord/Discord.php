@@ -3,6 +3,7 @@
 
 namespace App\Http\Services\Discord;
 
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 /**
@@ -26,12 +27,24 @@ class Discord
     /**
      * @param array $body
      * @param string $endpoint
-     * @return \Illuminate\Http\Client\Response
+     * @return Response
      */
     public function patch(string $body, string $endpoint)
     {
         return Http::withHeaders(
            $this->headers
         )->withBody($body, 'application/json')->patch(self::BASE_URL . $endpoint);
+    }
+
+    /**
+     * @param string $body
+     * @param string $endpoint
+     * @return Response
+     */
+    public function post(string $body, string $endpoint): Response
+    {
+        return Http::withHeaders(
+            $this->headers
+        )->withBody($body, 'application/json')->post(self::BASE_URL . $endpoint);
     }
 }

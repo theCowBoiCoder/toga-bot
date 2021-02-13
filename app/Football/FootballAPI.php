@@ -2,6 +2,7 @@
 
 namespace App\Football;
 
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 
 class FootballAPI{
@@ -42,7 +43,7 @@ class FootballAPI{
 
     public static function findMatchesByCompetitionAndMatchday($date)
     {
-        $resource = 'competitions/' . env('FOOTBALL_PREMIER_LEAGUE_ID') . '/matches/?matchday=' . $date;
+        $resource = 'competitions/' . env('FOOTBALL_PREMIER_LEAGUE_ID') . '/matches/?matchday=' . $date.'&dateFrom='.Carbon::today()->toDateString().'&dateTo='.Carbon::today()->toDateString().'';
         return self::run("v2/$resource",'GET');
     }
 }
