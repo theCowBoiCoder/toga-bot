@@ -14,8 +14,14 @@
             <div>
                 <h1 class="text-7xl text-white uppercase">Welcome to <strong class="text-yellow-400">Toga Bot</strong></h1>
             </div>
-            <div class="mt-3">
+            <div class="mt-3 mb-7">
                 <p class="text-white uppercase text-lg text-yellow-400"><strong>Where we bring the fun</strong></p>
+            </div>
+            <div class="flex">
+                <div>
+                    <p class="text-center mb-2 text-white uppercase font-light">Join Our Discord</p>
+                    <a href="https://discord.com/invite/f8dMr9qFXG" target="_blank"><img src="http://assets.stickpng.com/images/5847f2d1cef1014c0b5e4870.png" alt="" width="200"></a>
+                </div>
             </div>
         </header>
     </div>
