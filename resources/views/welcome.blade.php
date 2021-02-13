@@ -20,7 +20,7 @@
             <div class="flex">
                 <div>
                     <p class="text-center mb-2 text-white uppercase font-light">Join Our Discord</p>
-                    <a href="https://discord.com/invite/f8dMr9qFXG" target="_blank"><img src="http://assets.stickpng.com/images/5847f2d1cef1014c0b5e4870.png" alt="" width="200"></a>
+                    <a href="https://discord.com/invite/f8dMr9qFXG" target="_blank"><img src="https://assets.stickpng.com/images/5847f2d1cef1014c0b5e4870.png" alt="" width="200"></a>
                 </div>
             </div>
         </header>
