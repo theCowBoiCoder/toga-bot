@@ -44,13 +44,11 @@ class GetMatchByMatchDay extends Command
      * Execute the console command.
      *
      * @return int
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function handle()
     {
-        $discord = new Discord([
-            'token' => env('DISCORD_TOKEN')
-        ]);
-
+        $fields = [];
         $premMatches = FootballAPI::findPremierLeagueMatchesCompetitionAndMatchday(NULL);
         foreach ($premMatches->matches as $match){
 
@@ -81,38 +79,6 @@ class GetMatchByMatchDay extends Command
                 'away_team_score' => ($match->score->fullTime->awayTeam == NULL)?0:$match->score->fullTime->awayTeam,
             ]);
         }
-
-//        $champMatches = FootballAPI::findChampionsLeagueMatchesCompetitionAndMatchday(NULL);
-//        foreach ($champMatches->matches as $match){
-//            Result::query()->updateOrCreate([
-//                'match_id' => $match->id
-//            ],[
-//                'match_day' => $match->matchday,
-//                'comp' => 'UFEA Champions League',
-//                'status' => $match->status,
-//                'winner' => $match->score->winner,
-//                'home_team_name' => $match->homeTeam->name,
-//                'home_team_score' => $match->score->fullTime->homeTeam,
-//                'away_team_name' => $match->awayTeam->name,
-//                'away_team_score' => $match->score->fullTime->awayTeam,
-//            ]);
-//        }
-
-//        $eurpMatches = FootballAPI::findEuropaLeagueMatchesCompetitionAndMatchday(NULL);
-//        foreach ($eurpMatches->matches as $match){
-//            Result::query()->updateOrCreate([
-//                'match_id' => $match->id
-//            ],[
-//                'match_day' => $match->matchday,
-//                'comp' => 'UFEA Europa League',
-//                'status' => $match->status,
-//                'winner' => $match->score->winner,
-//                'home_team_name' => $match->homeTeam->name,
-//                'home_team_score' => $match->score->fullTime->homeTeam,
-//                'away_team_name' => $match->awayTeam->name,
-//                'away_team_score' => $match->score->fullTime->awayTeam,
-//            ]);
-//        }
 
         //Send Message in Discord..
         $results = Result::query()->whereDate('created_at',Carbon::today()->toDateString())->get();
