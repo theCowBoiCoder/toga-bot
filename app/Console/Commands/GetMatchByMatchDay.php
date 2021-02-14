@@ -75,10 +75,10 @@ class GetMatchByMatchDay extends Command
                 'winner' => $match->score->winner,
                 'home_team_id' => $match->homeTeam->id,
                 'home_team_name' => $match->homeTeam->name,
-                'home_team_score' => $match->score->fullTime->homeTeam,
+                'home_team_score' => ($match->score->fullTime->homeTeam == NULL)?0:$match->score->fullTime->homeTeam,
                 'away_team_id' => $match->awayTeam->id,
                 'away_team_name' => $match->awayTeam->name,
-                'away_team_score' => $match->score->fullTime->awayTeam,
+                'away_team_score' => ($match->score->fullTime->awayTeam == NULL)?0:$match->score->fullTime->awayTeam,
             ]);
         }
 
