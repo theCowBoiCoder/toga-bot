@@ -5,7 +5,10 @@ namespace App\Console\Commands;
 use App\Discord\JoinTeam;
 use App\Discord\Member as DiscordMember;
 use App\Football\FootballAPI;
+use App\Football\Predictor;
+use App\Models\GamePredictor;
 use App\Models\Members;
+use App\Models\Result;
 use Carbon\Carbon;
 use Discord\Http\Http;
 use Discord\Parts\Channel\Channel;
@@ -19,6 +22,7 @@ use Discord\WebSockets\Event;
 use Discord\WebSockets\Events\GuildIntegrationsUpdate;
 use Illuminate\Console\Command;
 use Discord\Discord;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use RestCord\DiscordClient;
 
@@ -72,8 +76,44 @@ class TestDiscordBotCommand extends Command
                     JoinTeam::join($message);
                 }
 
-                if ($message->content === '--me') {
-                    DiscordMember::me($message);
+                if ($message->content === '--games today') {
+                    $todays_games = Result::query()->where('status','SCHEDULED')->whereDate('created_at',Carbon::today()->toDateString())->get();
+                    $embedded = new Embed($discord);
+                    $embedded->setTitle("Great please choose from below who you want to predict for.");
+                    if(count($todays_games) >= 1){
+                        foreach ($todays_games as $key => $game){
+                            $embedded->addField(['name' => "[{$key}] {$game->home_team_name} vs {$game->away_team_name}", 'value' => "Odds Coming Soon"]);
+                        }
+
+                        $embedded->setDescription("To predict all you need to do is --predict [0] 1-2 you musy follow this format or the prediction will not work");
+
+                    }else{
+                        $embedded->addField(['name' => 'No Games', 'value' => "Sorry there are no games to predict today try again tomorrow."]);
+                    }
+                    $embedded->setFooter('POWERED BY TOGA BOT');
+                    $message->channel->sendEmbed($embedded)->then(function (Message $message) {
+                        $message->react('804130997863317595');
+                    });
+                }
+
+                if ($message->content === '--my predictions') {
+                    $todays_games = Arr::flatten(Result::query()->select('id')->where('status','SCHEDULED')->whereDate('created_at',Carbon::today()->toDateString())->get()->toArray());
+                    $my_predictions = Predictor::getMyMatchPredictions((int)$message->user_id,$todays_games);
+                    if(count($my_predictions) >= 1){
+
+                    }else{
+                        $message->channel->sendMessage("Sorry {$message->author->username} you have not set any predictions yet.");
+                    }
+
+                }
+
+                if (Str::contains($message->content, '--changenickname') !== false) {
+                    $explode = explode(' ', $message->content);
+//                    $discordClient->guild->modifyGuildMember(
+//                        ['guild.id' => (int)env('DISCORD_GUILD'), 'user.id' => (int)$message->user_id]
+//                    );
+                    dump($message->author->id);
+                    $discordClient->guild->modifyGuildMember(['guild.id' => (int)env('DISCORD_GUILD'), 'user.id' => (int)$message->user_id, 'nick' => 'string']);
                 }
 
 
