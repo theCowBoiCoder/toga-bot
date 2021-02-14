@@ -22,10 +22,10 @@ class CreateResultsTable extends Migration
             $table->string('winner')->nullable();
             $table->integer('home_team_id')->nullable();
             $table->string('home_team_name')->nullable();
-            $table->integer('home_team_score')->default(0);
+            $table->integer('home_team_score')->default(0)->nullable();
             $table->integer('away_team_id')->nullable();
             $table->string('away_team_name')->nullable();
-            $table->integer('away_team_score')->default(0);
+            $table->integer('away_team_score')->default(0)->nullable();
             $table->timestamps();
         });
     }
