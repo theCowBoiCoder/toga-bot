@@ -18,14 +18,14 @@ class CreateResultsTable extends Migration
             $table->integer('match_id');
             $table->integer('match_day');
             $table->string('comp');
-            $table->string('status');
-            $table->string('winner');
+            $table->string('status')->nullable();
+            $table->string('winner')->nullable();
             $table->integer('home_team_id')->nullable();
-            $table->string('home_team_name');
-            $table->integer('home_team_score');
+            $table->string('home_team_name')->nullable();
+            $table->integer('home_team_score')->nullable();
             $table->integer('away_team_id')->nullable();
-            $table->string('away_team_name');
-            $table->integer('away_team_score');
+            $table->string('away_team_name')->nullable();
+            $table->integer('away_team_score')->nullable();
             $table->timestamps();
         });
     }

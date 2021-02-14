@@ -120,7 +120,7 @@ class GetMatchByMatchDay extends Command
             foreach ($results as $result){
                 $fields[] = [
                     'name' => "{$result->home_team_name} VS {$result->away_team_name}",
-                    'value' => "{$result->home_team_score} - {$result->away_team_score}"
+                    'value' => $result->home_team_score ?? 0 . " - " . $result->away_team_score ?? 0
                 ];
             }
             $embeds[] = [
