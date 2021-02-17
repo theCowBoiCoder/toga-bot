@@ -17,4 +17,13 @@ class GamePredictor extends Model
         'discord_id',
         'is_winner'
     ];
+
+    /**
+     * Returns the match
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function match(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Result::class,'id','match_id');
+    }
 }

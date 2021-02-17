@@ -26,6 +26,14 @@ class Predictor {
         ]);
     }
 
+    public static function checkMatchPrediction($match_id,$discord_id)
+    {
+        return GamePredictor::query()
+            ->where('discord_id',$discord_id)
+            ->where('match_id',$match_id)
+            ->first();
+    }
+
     /**
      * Gets My Match Predictions
      * @param $discord_id

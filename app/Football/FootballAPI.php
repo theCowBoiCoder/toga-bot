@@ -10,12 +10,12 @@ class FootballAPI{
     public static function run($uri,$type = 'GET')
     {
         $client = new Client([
-            'base_uri'  =>  'http://api.football-data.org/',
+            'base_uri'  =>  'https://api.football-data.org/',
             'headers'   =>  [
-                'X-Auth-Token' => getenv('FOOTBALL_API_TOKEN')
+                'X-Auth-Token' => env('FOOTBALL_API_TOKEN')
             ]
         ]);
-        return json_decode($client->request($type,$uri)->getBody());
+        return json_decode($client->get((string)$uri)->getBody());
     }
 
     public static function getLeagues( array $filter = ['stage' => ''])
@@ -49,8 +49,8 @@ class FootballAPI{
 
     public static function findPremierLeagueMatchesCompetitionAndMatchday($date)
     {
-        $resource = 'competitions/' . env('FOOTBALL_PREMIER_LEAGUE_ID') . '/matches/?matchday=' . $date.'&dateFrom='.Carbon::today()->toDateString().'&dateTo='.Carbon::today()->toDateString().'';
-        return self::run("v2/$resource",'GET');
+        $resource = 'v2/competitions/' . env('FOOTBALL_PREMIER_LEAGUE_ID') . '/matches?matchday=' . $date.'&dateFrom='.Carbon::today()->toDateString().'&dateTo='.Carbon::today()->toDateString().'';
+        return self::run($resource, 'GET');
     }
 
     public static function findChampionsLeagueMatchesCompetitionAndMatchday($date)

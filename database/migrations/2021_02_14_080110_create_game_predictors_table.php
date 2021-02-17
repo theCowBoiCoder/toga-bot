@@ -17,7 +17,7 @@ class CreateGamePredictorsTable extends Migration
             $table->id();
             $table->integer('match_id');
             $table->string('result');
-            $table->integer('discord_id');
+            $table->string('discord_id');
             $table->boolean('is_winner')->default(0)->nullable();
             $table->timestamps();
         });

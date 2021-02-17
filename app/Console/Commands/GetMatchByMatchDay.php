@@ -51,7 +51,7 @@ class GetMatchByMatchDay extends Command
         $fields = [];
         $premMatches = FootballAPI::findPremierLeagueMatchesCompetitionAndMatchday(NULL);
         foreach ($premMatches->matches as $match){
-
+            dd($match);
             //Update the team ID
             FootballTeam::query()->where('name',$match->homeTeam->name)
                 ->update([
@@ -105,7 +105,7 @@ class GetMatchByMatchDay extends Command
             ];
 
             $client = new Client();
-            $client->request('POST',env('PREMIER_LEAGUE_WEBHOOK'),[
+            $client->request("POST",env('PREMIER_LEAGUE_WEBHOOK'),[
                 'json' => $data
             ]);
         }

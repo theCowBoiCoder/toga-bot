@@ -65,13 +65,12 @@ class TestDiscordBotCommand extends Command
             'token' => env('DISCORD_TOKEN')
         ]);
 
-        $discordClient = new DiscordClient(['token' => env('DISCORD_TOKEN'),'apiUrl' => 'https://discord.com/api/v8']);
 
-        $discord->on('ready', function (Discord $discord) use ($discordClient) {
-            $discord->on('message', function (Message $message) use ($discord, $discordClient) {
-                if (CommandHandler::check($message->content)){
+        $discord->on('ready', function (Discord $discord) {
+            $discord->on('message', function (Message $message) use ($discord) {
+                if (CommandHandler::check($message->content)) {
                     CommandHandler::fire($message);
-                }else{
+                } else {
                     $message->channel->sendMessage("Sorry, command does not exist.");
                 }
                 if ($message->content === '!ping') {
@@ -83,17 +82,17 @@ class TestDiscordBotCommand extends Command
                 }
 
                 if ($message->content === '--games today') {
-                    $todays_games = Result::query()->where('status','SCHEDULED')->whereDate('created_at',Carbon::today()->toDateString())->get();
+                    $today_games = Result::query()->where('status', '!=', 'FINISHED')->whereDate('created_at', Carbon::today()->toDateString())->get();
                     $embedded = new Embed($discord);
                     $embedded->setTitle("Great please choose from below who you want to predict for.");
-                    if(count($todays_games) >= 1){
-                        foreach ($todays_games as $key => $game){
+                    if (count($today_games) >= 1) {
+                        foreach ($today_games as $key => $game) {
                             $embedded->addField(['name' => "[{$key}] {$game->home_team_name} vs {$game->away_team_name}", 'value' => "Odds Coming Soon"]);
                         }
 
                         $embedded->setDescription("To predict all you need to do is --predict [0] 1-2 you musy follow this format or the prediction will not work");
 
-                    }else{
+                    } else {
                         $embedded->addField(['name' => 'No Games', 'value' => "Sorry there are no games to predict today try again tomorrow."]);
                     }
                     $embedded->setFooter('POWERED BY TOGA BOT');
@@ -102,12 +101,46 @@ class TestDiscordBotCommand extends Command
                     });
                 }
 
-                if ($message->content === '--my predictions') {
-                    $todays_games = Arr::flatten(Result::query()->select('id')->where('status','SCHEDULED')->whereDate('created_at',Carbon::today()->toDateString())->get()->toArray());
-                    $my_predictions = Predictor::getMyMatchPredictions((int)$message->user_id,$todays_games);
-                    if(count($my_predictions) >= 1){
+                //Set Predictions
+                if (Str::contains($message->content, '--predict') !== false) {
+                    //Explode the message
+                    $explode_message = explode(' ', $message->content);
+                    $match_id = $explode_message[1];
+                    $score = $explode_message[2];
 
+
+                    $results = Result::query()->where('status', '!=', 'FINISHED')->whereDate('created_at', Carbon::today()->toDateString())->get();
+                    //Check if the prediction has been sent.
+                    $check_prediction = Predictor::checkMatchPrediction($results[$match_id]->id, (int)$message->user_id);
+                    if($check_prediction == null){
+                        //Set the Prediction
+                        Predictor::setMatchPrediction($results[$match_id]->id, (int)$message->user_id, $score);
+                        $message->channel->sendMessage("Thanks! Your Prediction for {$results[$match_id]->home_team_name} Vs {$results[$match_id]->away_team_name} has been set.");
                     }else{
+                        //@TODO - Need to later see if we can get the KICK OFF times so we can change the predictions up to kick off.
+                        $message->channel->sendMessage("Sorry you cannot change your prediction once you have changed it.");
+                    }
+                }
+
+                //Get My Predictions
+                if ($message->content === '--my predictions' || $message->content === '--mypredictions') {
+                    //Get the Games that are not finished
+                    $today_games = Arr::flatten(Result::query()->select('id')->where('status', '!=', 'FINISHED')->whereDate('created_at', Carbon::today()->toDateString())->get()->toArray());
+
+                    //If I have some predictions then show them if not say NO!
+                    $my_predictions = Predictor::getMyMatchPredictions((int)$message->user_id, $today_games);
+                    if (count($my_predictions) >= 1) {
+                        $embedded = new Embed($discord);
+                        $embedded->setTitle("These are your predictions");
+                        foreach ($my_predictions as $my_prediction) {
+                            $embedded->addField(['name' => "{$my_prediction->match->home_team_name} Vs {$my_prediction->match->away_team_name}", 'value' => (string)($my_prediction->result)]);
+                        }
+
+                        $embedded->setFooter('POWERED BY TOGA BOT');
+                        $message->channel->sendEmbed($embedded)->then(function (Message $message) {
+                            $message->react('804130997863317595');
+                        });
+                    } else {
                         $message->channel->sendMessage("Sorry {$message->author->username} you have not set any predictions yet.");
                     }
 
@@ -119,9 +152,8 @@ class TestDiscordBotCommand extends Command
 //                        ['guild.id' => (int)env('DISCORD_GUILD'), 'user.id' => (int)$message->user_id]
 //                    );
                     dump($message->author->id);
-                    $discordClient->guild->modifyGuildMember(['guild.id' => (int)env('DISCORD_GUILD'), 'user.id' => (int)$message->user_id, 'nick' => 'string']);
+                    //$discordClient->guild->modifyGuildMember(['guild.id' => (int)env('DISCORD_GUILD'), 'user.id' => (int)$message->user_id, 'nick' => 'string']);
                 }
-
 
 
                 if ($message->content === '--topoftheleague') {
