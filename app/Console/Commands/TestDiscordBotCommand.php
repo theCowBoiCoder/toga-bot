@@ -7,6 +7,7 @@ use App\Discord\Member as DiscordMember;
 use App\Football\FootballAPI;
 use App\Football\Predictor;
 use App\Models\GamePredictor;
+use App\Http\Services\Discord\Commands\CommandHandler;
 use App\Models\Members;
 use App\Models\Result;
 use Carbon\Carbon;
@@ -68,6 +69,11 @@ class TestDiscordBotCommand extends Command
 
         $discord->on('ready', function (Discord $discord) use ($discordClient) {
             $discord->on('message', function (Message $message) use ($discord, $discordClient) {
+                if (CommandHandler::check($message->content)){
+                    CommandHandler::fire($message);
+                }else{
+                    $message->channel->sendMessage("Sorry, command does not exist.");
+                }
                 if ($message->content === '!ping') {
                     $message->channel->sendMessage('cock!');
                 }
