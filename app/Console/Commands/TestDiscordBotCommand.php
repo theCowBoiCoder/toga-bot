@@ -72,7 +72,9 @@ class TestDiscordBotCommand extends Command
 
 
                 if (CommandHandler::check($message->content)) {
-                    CommandHandler::fire($message,$message->content);
+                    CommandHandler::fire($message);
+                }else{
+                    $message->channel->sendMessage("Command not found!");
                 }
 
 

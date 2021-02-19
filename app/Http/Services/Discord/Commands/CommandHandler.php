@@ -16,12 +16,17 @@ class CommandHandler
 {
     public static function check($command)
     {
-        $allowed_commands = AllowedCommand::query()->where('command_name', 'LIKE','%'.substr(explode(' ',$command)[0], 2).'%')->where('status', 1)->first();
-        return $allowed_commands != null;
+        $exploded = substr(explode(' ',$command)[0], 2);
+        if (file_exists($exploded.'Command.php')){
+            return true;
+        }
+        return false;
+//        $allowed_commands = AllowedCommand::query()->where('command_name', 'LIKE','%'.substr(explode(' ',$command)[0], 2).'%')->where('status', 1)->first();
+//        return $allowed_commands != null;
 
     }
 
-    public static function fire(Message $message, $command)
+    public static function fire(Message $message)
     {
         $response = 'WHOOPS';
         $response_message = 0;
