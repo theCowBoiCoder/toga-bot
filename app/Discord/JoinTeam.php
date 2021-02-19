@@ -12,10 +12,10 @@ class JoinTeam
     /**
      * Member joins the discord crew
      * @param Message $message
-     * @return ExtendedPromiseInterface
+     * @return string
      * @throws \Exception
      */
-    public static function join(Message $message): ExtendedPromiseInterface
+    public static function join(Message $message): string
     {
         $author = $message->author;
         $newUser = Members::query()->where('discord_id', $author->user->id)->first();
@@ -27,9 +27,9 @@ class JoinTeam
                 'joined_at' => $author->joined_at->toDateString()
             ]);
 
-            return $message->channel->sendMessage("Welcome {$author->nick} and thanks for joining the Toga Bot. You joined here {$author->joined_at->toDateString()}");
+            return "Welcome {$author->nick} and thanks for joining the Toga Bot. You joined here {$author->joined_at->toDateString()}";
         }
 
-        return $message->channel->sendMessage("Sorry {$author->nick} you have already joined the crew!");
+        return "Sorry {$author->nick} you have already joined the crew!";
     }
 }

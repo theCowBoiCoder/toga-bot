@@ -6,6 +6,7 @@ use App\Discord\JoinTeam;
 use App\Discord\Member as DiscordMember;
 use App\Football\FootballAPI;
 use App\Football\Predictor;
+use App\Models\AllowedCommand;
 use App\Models\GamePredictor;
 use App\Http\Services\Discord\Commands\CommandHandler;
 use App\Models\Members;
@@ -66,19 +67,17 @@ class TestDiscordBotCommand extends Command
         ]);
 
 
-        $discord->on('ready', function (Discord $discord) {
+        $discord->on('ready', function (Discord $discord)  {
             $discord->on('message', function (Message $message) use ($discord) {
+
+
                 if (CommandHandler::check($message->content)) {
-                    CommandHandler::fire($message);
-                } else {
-                    $message->channel->sendMessage("Sorry, command does not exist.");
-                }
-                if ($message->content === '!ping') {
-                    $message->channel->sendMessage('cock!');
+                    CommandHandler::fire($message,$message->content);
                 }
 
+
                 if ($message->content === '--join') {
-                    JoinTeam::join($message);
+
                 }
 
                 if ($message->content === '--games today') {
@@ -112,11 +111,11 @@ class TestDiscordBotCommand extends Command
                     $results = Result::query()->where('status', '!=', 'FINISHED')->whereDate('created_at', Carbon::today()->toDateString())->get();
                     //Check if the prediction has been sent.
                     $check_prediction = Predictor::checkMatchPrediction($results[$match_id]->id, (int)$message->user_id);
-                    if($check_prediction == null){
+                    if ($check_prediction == null) {
                         //Set the Prediction
                         Predictor::setMatchPrediction($results[$match_id]->id, (int)$message->user_id, $score);
                         $message->channel->sendMessage("Thanks! Your Prediction for {$results[$match_id]->home_team_name} Vs {$results[$match_id]->away_team_name} has been set.");
-                    }else{
+                    } else {
                         //@TODO - Need to later see if we can get the KICK OFF times so we can change the predictions up to kick off.
                         $message->channel->sendMessage("Sorry you cannot change your prediction once you have changed it.");
                     }
@@ -145,17 +144,6 @@ class TestDiscordBotCommand extends Command
                     }
 
                 }
-
-                if (Str::contains($message->content, '--changenickname') !== false) {
-                    $explode = explode(' ', $message->content);
-//                    $discordClient->guild->modifyGuildMember(
-//                        ['guild.id' => (int)env('DISCORD_GUILD'), 'user.id' => (int)$message->user_id]
-//                    );
-                    dump($message->author->id);
-                    //$discordClient->guild->modifyGuildMember(['guild.id' => (int)env('DISCORD_GUILD'), 'user.id' => (int)$message->user_id, 'nick' => 'string']);
-                }
-
-
                 if ($message->content === '--topoftheleague') {
 
                     $team = FootballAPI::getLeagueStandings(env('FOOTBALL_PREMIER_LEAGUE_ID'))[0];
