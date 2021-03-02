@@ -20,6 +20,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'discord_id',
+        'avatar'
     ];
 
     /**
@@ -40,4 +42,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function points()
+    {
+        //TODO this will be changed to points in a relationship eventually
+        return mt_rand(10, 1000);
+    }
 }
