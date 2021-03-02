@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +17,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
    return view('welcome');
+})->name('welcome');
+
+Route::group(['middleware'=>'auth'],function(){
+    Route::get('/dashboard', function (){
+        return view('dashboard');
+    })->name('dashboard');
+
+    Route::get('/logout', [LogoutController::class, 'logout'])->name('logout');
 });
+
+//Discord Oauth2 Routes
+Route::get('login/discord', [LoginController::class, 'redirectToProvider']);
+Route::get('login/discord/callback', [LoginController::class, 'handleProviderCallback']);
+Route::get('/unlink/discord', [LoginController::class, 'unlinkDiscord']);
