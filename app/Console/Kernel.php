@@ -24,6 +24,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('togabot:its_night_watchman_time')->twiceDaily(23,6)->evenInMaintenanceMode()->onOneServer();
         $schedule->command('togabot:get_match_by_match_day')->twiceDaily(9,22)->evenInMaintenanceMode()->onOneServer();
         $schedule->command('togabot:store_team_data')->dailyAt('23:00')->evenInMaintenanceMode()->onOneServer();
     }

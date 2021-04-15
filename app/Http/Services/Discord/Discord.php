@@ -23,6 +23,17 @@ class Discord
         ];
     }
 
+    /**
+     * Get Request
+     * @param string $endpoint
+     * @return Response
+     */
+    public function get(string $endpoint): Response
+    {
+        return Http::withHeaders(
+            $this->headers
+        )->withOptions([ 'debug' => true,])->get(self::BASE_URL . $endpoint);
+    }
 
     /**
      * @param array $body
@@ -32,7 +43,7 @@ class Discord
     public function patch(string $body, string $endpoint)
     {
         return Http::withHeaders(
-           $this->headers
+            $this->headers
         )->withBody($body, 'application/json')->patch(self::BASE_URL . $endpoint);
     }
 
@@ -46,5 +57,29 @@ class Discord
         return Http::withHeaders(
             $this->headers
         )->withBody($body, 'application/json')->post(self::BASE_URL . $endpoint);
+    }
+
+    /**
+     * Put Request
+     * @param string $body
+     * @param string $endpoint
+     * @return Response
+     */
+    public function put(string $endpoint): Response
+    {
+        return Http::withHeaders($this->headers)
+            ->put(self::BASE_URL . $endpoint);
+    }
+
+    /**
+     * Put Request
+     * @param string $body
+     * @param string $endpoint
+     * @return Response
+     */
+    public function delete(string $endpoint): Response
+    {
+        return Http::withHeaders($this->headers)
+            ->delete(self::BASE_URL . $endpoint);
     }
 }
