@@ -44,6 +44,8 @@ class StoreTeamData extends Command
         {
             FootballTeam::query()->updateOrCreate([
                 'name' => $team->team->name,
+
+            ],[
                 'league_position' => $team->position,
                 'played_games' => $team->playedGames,
                 'won' => $team->won,
