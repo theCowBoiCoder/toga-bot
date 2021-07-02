@@ -3,11 +3,15 @@
 namespace App\Console\Commands;
 
 
+use App\Discord\Member;
 use App\Football\FootballAPI;
 use Discord\Parts\Channel\Message;
 use Discord\Parts\Embed\Embed;
+use Discord\Repository\Guild\MemberRepository;
+use Discord\WebSockets\Events\GuildMemberAdd;
 use Illuminate\Console\Command;
 use Discord\Discord;
+use Illuminate\Support\Facades\Event;
 
 
 class TestDiscordBotCommand extends Command
@@ -51,27 +55,30 @@ class TestDiscordBotCommand extends Command
         ]);
 
         $discord->on('ready', function () use ($discord) {
-           $discord->on('message',function (Message $message) use ($discord){
-               if ($message->content === '--topoftheleague') {
-                   $team = FootballAPI::getLeagueStandings(env('FOOTBALL_PREMIER_LEAGUE_ID'))[0];
-                   $embedded = new Embed($discord);
-                   $embedded->setTitle((string)$team->team->name);
-                   $embedded->setThumbnail('https://cdn.freebiesupply.com/images/large/2x/manchester-city-logo-png-transparent.png');
-                   $embedded->addField(['name' => 'Played', 'value' => $team->playedGames]);
-                   $embedded->addFieldValues('Won', $team->won, true);
-                   $embedded->addFieldValues('Draw', $team->draw, true);
-                   $embedded->addFieldValues('Lost', $team->lost, true);
-                   $embedded->addFieldValues('Points', $team->points, true);
-                   $embedded->addFieldValues('Scored', $team->goalsFor, true);
-                   $embedded->addFieldValues('Conceded', $team->goalsAgainst, true);
-                   $embedded->addFieldValues('Difference', $team->goalDifference, true);
-                   $embedded->setTimestamp();
-                   $embedded->setFooter('POWERED BY TOGA BOT');
-                   $message->channel->sendEmbed($embedded)->then(function (Message $message) {
-                       $message->react('804130997863317595');
-                   });
-               }
-           });
+            $discord->on(\Discord\WebSockets\Event::GUILD_MEMBER_ADD, function (\Discord\Parts\User\Member $member, Discord $discord) {
+                $discord->getChannel(790146349214859264)->sendMessage('Welcome <@'.$member->id.'> head over to <#792844269358153789> to pick what you want to see in here!! ');
+            });
+            $discord->on('message', function (Message $message) use ($discord) {
+                if ($message->content === '--topoftheleague') {
+                    $team = FootballAPI::getLeagueStandings(env('FOOTBALL_PREMIER_LEAGUE_ID'))[0];
+                    $embedded = new Embed($discord);
+                    $embedded->setTitle((string)$team->team->name);
+                    $embedded->setThumbnail('https://cdn.freebiesupply.com/images/large/2x/manchester-city-logo-png-transparent.png');
+                    $embedded->addField(['name' => 'Played', 'value' => $team->playedGames]);
+                    $embedded->addFieldValues('Won', $team->won, true);
+                    $embedded->addFieldValues('Draw', $team->draw, true);
+                    $embedded->addFieldValues('Lost', $team->lost, true);
+                    $embedded->addFieldValues('Points', $team->points, true);
+                    $embedded->addFieldValues('Scored', $team->goalsFor, true);
+                    $embedded->addFieldValues('Conceded', $team->goalsAgainst, true);
+                    $embedded->addFieldValues('Difference', $team->goalDifference, true);
+                    $embedded->setTimestamp();
+                    $embedded->setFooter('POWERED BY TOGA BOT');
+                    $message->channel->sendEmbed($embedded)->then(function (Message $message) {
+                        $message->react('804130997863317595');
+                    });
+                }
+            });
         });
 
         $discord->run();
