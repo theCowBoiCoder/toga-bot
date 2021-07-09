@@ -5,13 +5,16 @@ namespace App\Console\Commands;
 
 use App\Discord\Member;
 use App\Football\FootballAPI;
+use App\Models\Driver;
 use Discord\Parts\Channel\Message;
 use Discord\Parts\Embed\Embed;
+use Discord\Parts\Part;
 use Discord\Repository\Guild\MemberRepository;
 use Discord\WebSockets\Events\GuildMemberAdd;
 use Illuminate\Console\Command;
 use Discord\Discord;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
 
 
 class TestDiscordBotCommand extends Command
@@ -49,31 +52,92 @@ class TestDiscordBotCommand extends Command
     public function handle()
     {
 
-
+        $roles = [];
         $discord = new Discord([
             'token' => env('DISCORD_TOKEN')
         ]);
 
         $discord->on('ready', function () use ($discord) {
             $discord->on(\Discord\WebSockets\Event::GUILD_MEMBER_ADD, function (\Discord\Parts\User\Member $member, Discord $discord) {
-                $discord->getChannel(790146349214859264)->sendMessage('Welcome <@'.$member->id.'> head over to <#792844269358153789> to pick what you want to see in here!! ');
+                $discord->getChannel(790146349214859264)->sendMessage('Welcome <@' . $member->id . '> head over to <#792844269358153789> to pick what you want to see in here!! ');
+            });
+
+            $discord->on(\Discord\WebSockets\Event::GUILD_MEMBER_REMOVE, function (\Discord\Parts\User\Member $member, Discord $discord) {
+                $discord->getChannel(790146349214859264)->sendMessage('<@' . $member->id . '> See ya mate!');
             });
             $discord->on('message', function (Message $message) use ($discord) {
 
-                if($message->content === '--f1'){
+                if ($message->content === '--help') {
                     $embedded = new Embed($discord);
-                    $embedded->setTitle('F1 2021 Toga Motorsport');
-                    $embedded->addFieldValues('Alfa Romeo Racing-Ferrari','Alan / Rens');
-                    $embedded->addFieldValues('AlphaTauri-Honda','Vince / Matt S');
-                    $embedded->addFieldValues('Alpine-Renault','Tom / Matt M');
-                    $embedded->addFieldValues('Aston Martin-Mercedes','Harvey / Ben');
-                    $embedded->addFieldValues('Ferrari','Hayden / Cameron');
-                    $embedded->addFieldValues('Haas-Ferrari','Reno / Seb');
-                    $embedded->addFieldValues('McLaren-Mercedes','Bob / James');
-                    $embedded->addFieldValues('Mercedes','Wanksteen / Nicolas');
-                    $embedded->addFieldValues('Red Bull Racing-Honda','GuitarBeast / Max');
-                    $embedded->addFieldValues('Williams-Mercedes','Zac / Steph');
+                    $embedded->setTitle('Toga Bot Help Commands');
+                    $embedded->addFieldValues('--f1', 'Loads Teams and Drivers');
+                    $embedded->addFieldValues('--myteam', 'Shows my team and points');
+                    $embedded->addFieldValues('--topoftheleague', 'Shows the premier league standings');
+                    $embedded->setTimestamp();
+                    $embedded->setFooter('POWERED BY TOGA BOT');
+                    $message->channel->sendEmbed($embedded);
                 }
+                if ($message->content === '--f1') {
+                    foreach ($message->author->roles->toArray() as $key => $item) {
+                        $roles[] = $key;
+                    }
+                    if (in_array('800491196937404416', $roles)) {
+                        $embedded = new Embed($discord);
+                        $embedded->setTitle('F1 2021 Toga Motorsport');
+                        $embedded->setThumbnail('https://logodownload.org/wp-content/uploads/2016/11/formula-1-logo-2-2.png');
+                        $embedded->addFieldValues('Alfa Romeo Racing-Ferrari', 'Alan / Rens');
+                        $embedded->addFieldValues('AlphaTauri-Honda', 'Vince / Matt S');
+                        $embedded->addFieldValues('Alpine-Renault', 'Tom / Matt M');
+                        $embedded->addFieldValues('Aston Martin-Mercedes', 'Harvey / Ben');
+                        $embedded->addFieldValues('Ferrari', 'Hayden / Cameron');
+                        $embedded->addFieldValues('Haas-Ferrari', 'Reno / Seb');
+                        $embedded->addFieldValues('McLaren-Mercedes', 'Bob / James');
+                        $embedded->addFieldValues('Mercedes', 'Wanksteen / Nicolas');
+                        $embedded->addFieldValues('Red Bull Racing-Honda', 'GuitarBeast / Max');
+                        $embedded->addFieldValues('Williams-Mercedes', 'Zac / Steph');
+                        $embedded->setTimestamp();
+                        $embedded->setFooter('POWERED BY TOGA BOT');
+                        $message->channel->sendEmbed($embedded);
+                    }else{
+                        $message->channel->sendMessage("Sorry you cannot use this command");
+                    }
+
+
+                }
+
+                if ($message->content === '--myteam') {
+                    foreach ($message->author->roles->toArray() as $key => $item) {
+                        $roles[] = $key;
+                    }
+                    if (in_array('800491196937404416', $roles)) {
+                        if (Str::contains($message->author->username, '-')) {
+                            $discordUserName = Str::replace('-', ' ', $message->author->username) . '#' . $message->author->discriminator;
+                        } else {
+                            $discordUserName = $message->author->username . '#' . $message->author->discriminator;
+                        }
+                        $driver = Driver::query()->where('discord', $discordUserName)->first();
+                        if ($driver != null) {
+                            $embedded = new Embed($discord);
+                            $embedded->setTitle("My F1 2021 Team");
+                            $embedded->setThumbnail('https://logodownload.org/wp-content/uploads/2016/11/formula-1-logo-2-2.png');
+                            $embedded->addField(['name' => 'Constructor', 'value' => $driver->myteam->team->name]);
+                            $embedded->addFieldValues('Points', 'COMING SOON', true);
+                            $embedded->setTimestamp();
+                            $embedded->setFooter('POWERED BY TOGA BOT');
+                            $message->channel->sendEmbed($embedded)->then(function (Message $message) {
+                                //$message->react('804130997863317595');
+                            });
+                        } else {
+                            $message->channel->sendMessage("User Not Found!");
+                        }
+                    } else {
+                        $message->channel->sendMessage("Sorry you cannot use this command");
+                    }
+
+
+                }
+
+
                 if ($message->content === '--topoftheleague') {
                     $team = FootballAPI::getLeagueStandings(env('FOOTBALL_PREMIER_LEAGUE_ID'))[0];
                     $embedded = new Embed($discord);
