@@ -59,6 +59,21 @@ class TestDiscordBotCommand extends Command
                 $discord->getChannel(790146349214859264)->sendMessage('Welcome <@'.$member->id.'> head over to <#792844269358153789> to pick what you want to see in here!! ');
             });
             $discord->on('message', function (Message $message) use ($discord) {
+
+                if($message->content === '--f1'){
+                    $embedded = new Embed($discord);
+                    $embedded->setTitle('F1 2021 Toga Motorsport');
+                    $embedded->addFieldValues('Alfa Romeo Racing-Ferrari','Alan / Rens');
+                    $embedded->addFieldValues('AlphaTauri-Honda','Vince / Matt S');
+                    $embedded->addFieldValues('Alpine-Renault','Tom / Matt M');
+                    $embedded->addFieldValues('Aston Martin-Mercedes','Harvey / Ben');
+                    $embedded->addFieldValues('Ferrari','Hayden / Cameron');
+                    $embedded->addFieldValues('Haas-Ferrari','Reno / Seb');
+                    $embedded->addFieldValues('McLaren-Mercedes','Bob / James');
+                    $embedded->addFieldValues('Mercedes','Wanksteen / Nicolas');
+                    $embedded->addFieldValues('Red Bull Racing-Honda','GuitarBeast / Max');
+                    $embedded->addFieldValues('Williams-Mercedes','Zac / Steph');
+                }
                 if ($message->content === '--topoftheleague') {
                     $team = FootballAPI::getLeagueStandings(env('FOOTBALL_PREMIER_LEAGUE_ID'))[0];
                     $embedded = new Embed($discord);
