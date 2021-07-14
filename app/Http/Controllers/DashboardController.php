@@ -13,7 +13,17 @@ class DashboardController extends Controller
     {
         $tracks = Track::all();
         $drivers = Driver::all();
-        return view('f1', [
+        return view('f1.points', [
+            'tracks' => $tracks,
+            'drivers' => $drivers
+        ]);
+    }
+
+    public function f1PointsTable()
+    {
+        $tracks = Track::all();
+        $drivers = Driver::all();
+        return view('f1.table', [
             'tracks' => $tracks,
             'drivers' => $drivers
         ]);
@@ -21,8 +31,16 @@ class DashboardController extends Controller
 
     public function f1Points(Request $request)
     {
-        $fastest = [];
         $track_id = $request->track;
+
+        //Check if points have been allocated
+        $checkPoints = Point::query()->where('track_id', $track_id)->first();
+        if ($checkPoints != null) {
+            return redirect()->back()->with('failed', 'Sorry points have already been allocated to this track');
+        }
+
+        $fastest = [];
+
         foreach ($request->drivers as $key => $driver) {
             Point::query()->updateOrCreate([
                 'driver_id' => $key,
@@ -32,6 +50,5 @@ class DashboardController extends Controller
             ]);
         }
 
-        dd($request->all());
     }
 }

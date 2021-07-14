@@ -25,6 +25,7 @@ Route::group(['middleware' => 'auth'], function () {
     })->name('dashboard');
 
     Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+        Route::get('f1/points-table',[\App\Http\Controllers\DashboardController::class,'f1PointsTable'])->name('f1.table');
         Route::get('update/f1', [\App\Http\Controllers\DashboardController::class, 'f1'])->name('f1');
         Route::post('update/f1/points', [\App\Http\Controllers\DashboardController::class, 'f1Points'])->name('f1.points');
     });

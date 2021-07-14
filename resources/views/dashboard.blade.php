@@ -16,6 +16,11 @@
                         Unlink Discord
                     </a>
                 </div>
+                <div class="flex pt-2 pb-2 pl-4 pr-4 rounded m-2" style="background-color: #00A8FF">
+                    <a href="{{route('admin.f1.table')}}" class="text-center text-white">
+                        F1 Points Table
+                    </a>
+                </div>
                 @if(\Illuminate\Support\Facades\Auth::user()->is_admin)
                     <div class="flex pt-2 pb-2 pl-4 pr-4 rounded m-2" style="background-color: #00A8FF">
                         <a href="{{route('admin.f1')}}" class="text-center text-white">

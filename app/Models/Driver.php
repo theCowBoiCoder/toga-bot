@@ -19,11 +19,16 @@ class Driver extends Model
 
     public function team_mate()
     {
-       // return DriversTeams::query()->where('driver_id', $this->id)->get();
+        // return DriversTeams::query()->where('driver_id', $this->id)->get();
     }
 
     public function points()
     {
         return Point::query()->where('driver_id', $this->id)->sum('point');
+    }
+
+    public function tablePoints($track_id)
+    {
+        return Point::query()->where('driver_id', $this->id)->where('track_id', $track_id)->first()->point ?? 0;
     }
 }
