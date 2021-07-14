@@ -16,13 +16,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-   return view('welcome');
+    return view('welcome');
 })->name('welcome');
 
-Route::group(['middleware'=>'auth'],function(){
-    Route::get('/dashboard', function (){
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+        Route::get('update/f1', [\App\Http\Controllers\DashboardController::class, 'f1'])->name('f1');
+        Route::post('update/f1/points', [\App\Http\Controllers\DashboardController::class, 'f1Points'])->name('f1.points');
+    });
 
     Route::get('/logout', [LogoutController::class, 'logout'])->name('logout');
 });

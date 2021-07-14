@@ -21,7 +21,8 @@ class User extends Authenticatable
         'email',
         'password',
         'discord_id',
-        'avatar'
+        'avatar',
+        'is_admin'
     ];
 
     /**
@@ -43,7 +44,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function points()
+    public function points(): int
     {
         //TODO this will be changed to points in a relationship eventually
         return mt_rand(10, 1000);

@@ -21,4 +21,9 @@ class Driver extends Model
     {
        // return DriversTeams::query()->where('driver_id', $this->id)->get();
     }
+
+    public function points()
+    {
+        return Point::query()->where('driver_id', $this->id)->sum('point');
+    }
 }

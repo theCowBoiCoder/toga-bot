@@ -58,7 +58,7 @@ class CreatePointsTable extends Migration
             $table->foreign('driver_id')->references('id')->on('drivers');
             $table->bigInteger('track_id')->unsigned();
             $table->foreign('track_id')->references('id')->on('tracks');
-            $table->integer('point');
+            $table->integer('point')->default(0);
             $table->boolean('fastest_lap')->default(0);
             $table->timestamps();
         });

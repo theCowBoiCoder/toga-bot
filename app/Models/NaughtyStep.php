@@ -5,8 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Point extends Model
+class NaughtyStep extends Model
 {
     use HasFactory;
-    protected $fillable = ['driver_id','track_id','point','fastest_lap'];
+
+    protected $table = 'naughty_steps';
+    protected $fillable = ['user_id', 'role_ids', 'is_active'];
 }
