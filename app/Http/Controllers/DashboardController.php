@@ -22,7 +22,12 @@ class DashboardController extends Controller
     public function f1PointsTable()
     {
         $tracks = Track::all();
-        $drivers = Driver::all();
+        $drivers = Driver::query()->get();
+
+        $drivers = $drivers->sort(function($a, $b) {
+            return ($a->points() > $b->points()) ? -1 : 1;
+        });
+
         return view('f1.table', [
             'tracks' => $tracks,
             'drivers' => $drivers

@@ -19,6 +19,7 @@
                     @foreach($tracks as $track)
                         <th class="border border-white uppercase border-8 px-3">{{\Illuminate\Support\Str::substr($track->country,0,3)}}</th>
                     @endforeach
+                    <th class="border border-white border-8">TOTAL</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -28,6 +29,7 @@
                         @for($i = 1; $i<=24; $i++)
                             <td class="border-8 border border-white text-center text-white">{{$driver->tablePoints($i) ?? 0}}</td>
                         @endfor
+                        <td class="border border-white border-8 text-center text-white px-3 font-bold text-sm">{{$driver->points()}}</td>
                     </tr>
 
                 @endforeach
